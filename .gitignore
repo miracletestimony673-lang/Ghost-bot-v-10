@@ -7,4 +7,3 @@ creds.json
 .DS_Store
 *.session
 node_modules/
-keys.js
