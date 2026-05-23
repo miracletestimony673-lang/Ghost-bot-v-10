@@ -1,12 +1,18 @@
 export default async (context, next) => {
     const { m, isBotAdmin } = context;
 
-    if (!m.isGroup) {
-        return m.reply(`╭━━━ᕙ    FEE-XMD    ᕗ━━━\n├━━━≫ Gʀᴏᴜᴘ Oɴʟʏ ≪───\n├ \n├ This command only works in groups!\n├ Private chat? For this? Pathetic.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©Powered By fredi_ezra`);
-    }
+    // ✅ allow both private + group chats
+    // (removed group-only lock)
 
-    if (!isBotAdmin) {
-        return m.reply(`╭━━━ᕙ    FEE-XMD    ᕗ━━━\n├━━━≫ Aᴅᴍɪɴ Rᴇϙᴜɪʀᴇᴅ ≪━━━\n├ \n├ I need admin rights to get the group link!\n├ Make me admin or watch me do nothing.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©Powered By fredi_ezra`);
+    // ⚠️ bot admin check should only apply for group features
+    if (m.isGroup && !isBotAdmin) {
+        return m.reply(
+`╭━━━ᕙ    FEE-XMD    ᕗ━━━
+├━━━≫ Bᴏᴛ Aᴅᴍɪɴ Rᴇϙᴜɪʀᴇᴅ ≪━━━
+├ 
+├ I need admin rights in this group
+╰━━━━━━━━━━━━━━`
+        );
     }
 
     await next();

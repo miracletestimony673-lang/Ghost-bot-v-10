@@ -7,13 +7,19 @@ const normalizeNumber = (jid) => {
 
 const middleware = async (context, next) => {
     const { m, isBotAdmin, client } = context;
+
     const isDev = normalizeNumber(m.sender) === normalizeNumber(DEV_NUMBER);
 
-    if (!m.isGroup) {
-        return m.reply(`╭━━━ᕙ    FEE-XMD    ᕗ━━━\n├━━━≫ Gʀᴏᴜᴘ Oɴʟʏ ≪━━━\n├ \n├ This command isn't for lone wolves.\n├ Try again in a group, you loner.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©Powered By fredi_ezra`);
-    }
+    // ❌ REMOVED GROUP-ONLY LOCK (now supports DM + group)
+
     if (!isDev && !context.isAdmin) {
-        return m.reply(`╭━━━ᕙ    FEE-XMD    ᕗ━━━\n├━━━≫ Nᴏᴛ Aᴅᴍɪɴ ≪━━━\n├ \n├ You think you're worthy?\n├ Admin privileges are required—\n├ go beg for them, peasant.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©Powered By fredi_ezra`);
+        return m.reply(
+`╭━━━ᕙ    FEE-XMD    ᕗ━━━
+├━━━≫ Nᴏᴛ Aᴅᴍɪɴ ≪━━━
+├ 
+├ You are not allowed to use this command
+╰━━━━━━━━━━━━━━`
+        );
     }
 
     let resolvedIsBotAdmin = isBotAdmin;
@@ -24,11 +30,13 @@ const middleware = async (context, next) => {
             const botNum = botRawJid.split('@')[0].split(':')[0].replace(/\D/g, '');
             const meta = await client.groupMetadata(m.chat);
             const participants = meta?.participants || [];
+
             for (const p of participants) {
                 const pJid = p.id || p.jid || '';
                 const pNum = pJid.split('@')[0].split(':')[0].replace(/\D/g, '');
                 const isAdminRole = p.admin === 'admin' || p.admin === 'superadmin';
-                if (isAdminRole && pNum && botNum && (pNum === botNum || pNum.endsWith(botNum) || botNum.endsWith(pNum))) {
+
+                if (isAdminRole && pNum && botNum && (pNum === botNum || pNum.endsWith(botNum))) {
                     resolvedIsBotAdmin = true;
                     break;
                 }
@@ -37,7 +45,13 @@ const middleware = async (context, next) => {
     }
 
     if (!resolvedIsBotAdmin) {
-        return m.reply(`╭━━━ᕙ    FEE-XMD    ᕗ━━━\n├━━━≫ Bᴏᴛ Nᴏᴛ Aᴅᴍɪɴ ≪━━━\n├ \n├ I need admin rights to obey,\n├ unlike you who blindly follows.\n├ Make me admin first, idiot.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©Powered By fredi_ezra`);
+        return m.reply(
+`╭━━━ᕙ    FEE-XMD    ᕗ━━━
+├━━━≫ Bᴏᴛ Nᴏᴛ Aᴅᴍɪɴ ≪━━━
+├ 
+├ I need admin rights to work properly
+╰━━━━━━━━━━━━━━`
+        );
     }
 
     await next();
